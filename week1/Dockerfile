@@ -1,6 +1,6 @@
-FROM python:3.9
+FROM jupyter/minimal-notebook
 
-RUN pip install pandas
+RUN pip install pandas numpy
 
 WORKDIR /app
 COPY pipeline.py pipeline.py
