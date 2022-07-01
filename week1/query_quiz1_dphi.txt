@@ -1,0 +1,41 @@
+SELECT COUNT(*)
+FROM public.yellow_taxi_data
+WHERE tpep_pickup_datetime::date = '2021-01-15';
+
+
+SELECT date_trunc('day', tpep_pickup_datetime) as pickup_day,
+MAX(tip_amount) as max_tip
+FROM public.yellow_taxi_data
+GROUP BY pickup_day
+ORDER BY max_tip DESC
+limit 1;
+
+SELECT COALESCE (puzones."Zone",'Unknown') as zone ,
+COUNT(*) as cant_trips
+FROM public.yellow_taxi_data as taxi
+
+INNER JOIN public.zones as puzones
+ON taxi."PULocationID" = puzones."LocationID"
+LEFT JOIN public.zones as duzones
+ON taxi."DOLocationID" = duzones."LocationID"
+
+WHERE puzones."Zone" LIKE '%central park%'
+AND tpep_pickup_datetime::date = '2021-01-14'
+GROUP BY 1
+ORDER BY cant_trips DESC
+LIMIT 1;
+
+
+
+SELECT CONCAT(COALESCE(puzones."Zone",'Unknown'), '/', COALESCE(duzones."Zone",'Unknown')) as pickup_dropoff,
+ AVG(total_amount) as avg_price_ride
+FROM public.yellow_taxi_data as taxi
+
+LEFT JOIN public.zones as puzones
+ON taxi."PULocationID" = puzones."LocationID"
+LEFT JOIN public.zones as duzones
+ON taxi."DOLocationID" = duzones."LocationID"
+
+GROUP BY 1
+ORDER BY avg_price_ride DESC
+LIMIT 1;
